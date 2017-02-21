@@ -1,6 +1,6 @@
 {
   "name": "burble",
-  "version": "0.2.4",
+  "version": "0.0.1",
   "description": "A small functional reactive pipeline library",
   "repository": {
     "type": "git",
