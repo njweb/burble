@@ -1,7 +1,7 @@
 {
   "name": "burble",
   "version": "0.2.4",
-  "description": "Replace this description",
+  "description": "A small functional reactive pipeline library",
   "repository": {
     "type": "git",
     "url": "https://github.com/njweb/bristle"
