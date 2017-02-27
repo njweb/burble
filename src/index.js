@@ -38,6 +38,19 @@ const _makePipe = (pipeOperations) => {
         return pipe;
       }
     },
+    take: {
+      value: (count) => {
+        return new Promise(res => {
+          const storage = [];
+          _listeners.push((msg) => {
+            if (storage.push(msg) >= count) {
+              res(storage);
+              return false;
+            }
+          })
+        });
+      }
+    },
     _inject: {
       value: inject
     }
