@@ -1,71 +1,97 @@
-export const burble = function burble(pipes) {
-  let _unboundPipes = [];
-  const stream = Object.defineProperties({}, {
-    give: {value: (msg) => { stream._inject(msg, 0); }, enumerable: true},
-    take: {
-      value: (modifier) => {
-        if (typeof modifier === 'function') {
-          stream._listeners.push(modifier);
-          return modifier;
-        }
-      }, enumerable: true
-    },
-    _listeners: {value: [], writable: true},
-    _complete: {
-      value: (msg) => {
-        stream._listeners.forEach(listener => {
-          listener(msg);
-        })
+const _flowThrough = (pipeline, msg, index) => {
+  for (let len = pipeline.length; index < len; index += 1) {
+    if (pipeline[index] !== undefined) {
+      msg = pipeline[index](msg);
+      if (msg === undefined) break;
+    }
+  }
+  return msg;
+};
+
+const _broadcast = (msg, listeners) => {
+  if (msg !== undefined) {
+    let stripIndexes = [];
+    listeners.forEach((listener, index) => {
+      if (listener(msg) === false) stripIndexes.push(index);
+    });
+    if (stripIndexes.length > 0) {
+      listeners = listeners.filter((listener, index) => {
+        if (stripIndexes.length > 0 && stripIndexes[0] === index) {
+          stripIndexes.shift();
+          return false;
+        } else return true;
+      });
+    }
+  }
+  return listeners;
+};
+
+const _makePipe = (pipeOperations) => {
+  let _listeners = [];
+  const inject = (msg, index) => {
+    _listeners = _broadcast(_flowThrough(_pipeline, msg, index), _listeners);
+  };
+  const pipe = Object.defineProperties((msg) => { inject(msg, 0); }, {
+    out: {
+      value: (callback) => {
+        _listeners.push(callback);
+        return pipe;
       }
     },
     _inject: {
-      value: (msg, index) => {
-        for (let i = index, len = stream._pipeline.length; i < len; i += 1) {
-          if (msg !== undefined) {
-            if(stream._pipeline[i] !== undefined) msg = stream._pipeline[i](msg);
-          }
-          else break;
-        }
-        if (msg !== undefined) stream._complete(msg);
-      }
+      value: inject
     }
   });
-  const streamBuilder = {
-    attach: (pipeOp) => {
-      _unboundPipes.push(pipeOp);
-      return streamBuilder;
+  const _pipeline = pipeOperations.map((stage, index) => stage(pipe, index));
+  return pipe;
+};
+
+const _pipeBuilder = () => {
+  let _pipeOperations = [];
+  let builder = {
+    map: function map(predicate) {
+      _pipeOperations.push(() => (msg) => predicate(msg));
+      return builder;
     },
-    seal: () => {
-      Object.defineProperty(stream, '_pipeline', {
-        value: _unboundPipes.map((pipeOp, index) => pipeOp(stream, index))
+    filter: function filter(predicate) {
+      _pipeOperations.push(() => (msg) => predicate(msg) === true ? msg : undefined);
+      return builder;
+    },
+    scan: function scan(predicate, accumulator) {
+      _pipeOperations.push(() => (msg) => {
+        accumulator = predicate(accumulator, msg);
+        return accumulator;
       });
-      return stream;
+      return builder;
+    },
+    merge: function merge(pipes) {
+      if (!Array.isArray(pipes)) pipes = [pipes];
+      _pipeOperations.push((pipe, index) => {
+        index += 1;
+        const _injector = msg => { pipe._inject(msg, index); };
+        pipes.forEach(pipe => pipe.out(_injector));
+      });
+      return builder;
+    },
+    pump: function pump(predicate) {
+      _pipeOperations.push((pipe, index) => {
+        index += 1;
+        const _injector = (msg) => { pipe._inject(msg, index); };
+        return (msg) => predicate(msg, _injector);
+      });
+      return builder;
+    },
+    attach: function attach(operation) {
+      _pipeOperations.push(operation);
+      return builder;
+    },
+    make: function make() {
+      return _makePipe(_pipeOperations);
     }
   };
-  return streamBuilder;
+  return builder;
 };
 
-export const map = function map(predicate) {
-  return () => msg => predicate(msg);
-};
-
-export const filter = function filter(predicate) {
-  return () => msg => predicate(msg) ? msg : undefined;
-};
-
-export const scan = function scan(predicate, accumulator) {
-  return () => msg => accumulator = predicate(accumulator, msg);
-};
-
-export const merge = function merge(inputStream) {
-  return (stream, index) => {
-    inputStream.take((msg) => stream._inject(msg, index + 1));
-  }
-};
-
-export const pump = function pump(predicate) {
-  return (stream, index) => {
-    let inject = msg => stream._inject(msg, index + 1);
-    return msg => predicate(msg, inject);
-  }
+export const burble = function burble() {
+  return _pipeBuilder();
 };
