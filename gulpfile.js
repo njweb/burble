@@ -8,7 +8,7 @@ let replace = require('rollup-plugin-replace');
 let babelRegister = require('babel-register');
 let source = require('vinyl-source-stream');
 
-let jest = require('jest-cli');
+let jest = require('jest');
 
 let pkg = require('./package.json');
 
@@ -69,6 +69,7 @@ gulp.task('build_min_lib', function () {
 gulp.task('spec', function (done) {
   process.env.BABEL_ENV = 'test';
   jest.runCLI({
+    config: {verbose: true},
     onlyChanged: false,
     testFileExtensions: ["js"],
     moduleFileExtensions: ["js", "jsx", "json"]

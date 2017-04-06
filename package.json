@@ -13,18 +13,17 @@
       "url": "http://www.opensource.org/licenses/mit-license.php"
     }
   ],
+  "dependencies": {},
   "devDependencies": {
-    "babel-preset-es2015": "^6.16.0",
-    "babel-register": "^6.16.3",
-    "gulp": "^3.8.10",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^2.0.1",
-    "jest-cli": "^18.1.0",
+    "babel-jest": "^19.0.0",
+    "babel-preset-es2015": "^6.24.0",
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^2.1.2",
+    "jest": "^19.0.2",
     "regenerator-runtime": "^0.10.3",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-replace": "^1.1.1",
-    "rollup-stream": "^1.14.0",
-    "vinyl-source-stream": "^1.0.0"
-  },
-  "dependencies": {}
+    "rollup-stream": "^1.19.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
 }
