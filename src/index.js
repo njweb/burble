@@ -1,81 +1,63 @@
 require('regenerator-runtime/runtime');
-import fs from 'mz/fs'
+import fs from 'fs'
 
-const labelString = (labelRoot) => labelRoot + ' with: ';
+export const parseFile = filename => {
+  const parts = filename.split('@');
+  return new Promise((res, rej) => {
+    fs.stat(parts[0], (err, stats) => {
+      if (err) rej(err);
+      else if (!stats.isFile()) rej(Error('No file found'));
+      else {
+        fs.readFile(parts[0], 'utf8', (err, fileContents) => {
+          if (err) rej(err);
+          const data = JSON.parse(fileContents);
 
-export const parseFile = (filename) => {
-  let parts = filename.split('@');
-  console.log("HERE", parts[0]);
-  return fs.exists(parts[0])
-    .then((result) => {
-      console.log('HERE A');
-      if (!result) throw Error('File not found');
-      return fs.readFile(parts[0], 'utf8');
-    }).then((data) => {
-      console.log("HERE B");
-      data = JSON.parse(data);
-      if (parts[1]) {
-        const key = parts[1];
-        if (!data.hasOwnProperty(key)) throw Error('Examples are missing requested property');
-        if (!Array.isArray(data[key])) throw Error('Examples must be stored in an array');
-        return data[key];
-      } else {
-        if (!Array.isArray(data)) throw Error('Examples must be stored in an array');
-        return data;
+          let output = data;
+          if (parts[1]) output = data[parts[1]];
+          if (!Array.isArray(output)) rej(Error(parts[1] ? 'Examples not found at ' + parts[1] : 'Examples not found'));
+          else res(output);
+        });
       }
     });
+  });
 };
 
-const wrapTest = (test, element, callback) => {
-  try {
-    test(element);
-    callback();
-  } catch (e) {
-    callback(e);
+const testWithExamples = (examples, test) => {
+  examples.forEach(v => test(v));
+};
+
+const testWithIterator = (iterator, test) => {
+  let counter = 0;
+  let item = iterator.next();
+  while (!item.done && counter++ < 10) {
+    try {
+      test(item.value);
+    } catch (e) {
+      throw e;
+    }
+    item = iterator.next();
   }
 };
 
-const burble = ({examples, iterator, filename, iteratorCycles = 10}) => {
-  if (!examples && !iterator && !filename) throw Error('Burble needs at least one example source');
+const burble = ({examples, iterator, filename}) => {
 
-  return (description, test) => {
-    return Promise.resolve((res => {
-      if (examples) {
-        console.log("EXAMPLES");
-        examples.forEach(e => it(description, test.bind(null, e)));
-      }
-    })()).then(() => {
-      if (filename) {
-        console.log("FILENAME", filename);
-        return parseFile(filename)
-          .then(examples => {
-            console.log("E ------> ", examples, Array.isArray(examples));
-            examples.forEach(e => {
-              console.log("HERE C", e);
-              it(description, test.bind(null, e));
-            });
-          });
-      }
-    }).then(() => {
-      if (iterator) {
-        console.log("ITERATOR");
-        let abort = false;
-        let counter = 0;
-        let item = iterator.next();
-        while (counter++ < iteratorCycles && !item.done && !abort) {
-          wrapTest(test, item.value, e => {
-            if (e) {
-              it(description, () => {
-                throw e;
-              });
-              abort = true;
-            }
-          });
-          item = iterator.next();
+  return (test) => {
+    return Promise.resolve(examples ? testWithExamples(examples, test) : null)
+      .then(() => {
+        if (filename) {
+          return parseFile(filename);
         }
-      }
-    });
+      }).then(fileExamples => {
+        if (fileExamples) {
+          testWithExamples(fileExamples, test);
+        }
+      }).then(() => {
+        if (iterator) {
+          testWithIterator(iterator, test);
+        }
+      });
   }
+
 };
 
 export default burble;

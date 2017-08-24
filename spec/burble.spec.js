@@ -4,6 +4,7 @@ const path = require('path');
 const mockFn = jest.fn();
 import burble from '../src'
 import {parseFile} from '../src'
+import {pFetchRecord} from '../src/fileRecords';
 import faker from 'faker'
 
 const maybe = (valueA, valueB, probability = 0.5) => {
@@ -32,32 +33,40 @@ const userFactory = () => {
   }
 };
 
+const charFactory = () => {
+  let chars = 'abcd'.split('');
+  // chars = chars.concat([1, 2]);
+  return chars[Math.floor(Math.random() * chars.length)];
+};
+
 const nameLength = (user) => {
   if (user.hasOwnProperty('friendlyName')) return user.friendlyName.length;
   else return user.firstName.length + user.lastName.length + 1;
 };
 
+
 describe('burble', () => {
-  return burble({
-    examples: ['a', 'b'],
-    iterator: factoryToGenerator(() => faker.random.alphaNumeric(1))(),
-    filename: path.resolve(__dirname, './examples.json') + '@things'
-  })('should work', (item) => {
-    console.log('TEST: ', item);
-    expect(item.length < 4).toBe(true);
+  it('should work', () => {
+    return pFetchRecord(__dirname + 'examples.json', 'myThings').then(result => {
+      expect(result.exists).toBe(true);
+    });
   });
-  // it('should work', () => {
-  //   console.log("PATH -> ", path.resolve(__dirname, './examples.json'));
-  //   // return parseFile(path.resolve(__dirname, './examples.json') + '@things');
-  //   return parseFile(path.resolve(__dirname, './examples.json') + '@things');
-  // });
-
-  // burble({
-  //   examples: [userFactory(), userFactory()],
-  //   iterator: factoryToGenerator(userFactory)()
-  // })('should work', (userValue) => {
-  //   expect(nameLength(userValue) > 0).toBe(true);
-  // });
-
-
 });
+
+// describe('burble', () => {
+//   it('should work', () => {
+//     return new Promise(res => {
+//       setTimeout(() => {
+//         res(5);
+//       }, 200);
+//     }).then(v => expect(v).toBe(4));
+//   });
+//   // return burble({
+//   //   // examples: ['a', 'b'],
+//   //   // iterator: factoryToGenerator(() => faker.random.alphaNumeric(1))(),
+//   //   filename: path.resolve(__dirname, './examples.json') + '@things'
+//   // })('should work', (item) => {
+//   //   console.log('TEST: ', item);
+//   //   expect(item.length < 2).toBe(true);
+//   // });
+// });
