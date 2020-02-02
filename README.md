@@ -1,3 +1,3 @@
 **Burble**
 
-A small functional reactive pipeline library.
+An auto-reducer for redux
