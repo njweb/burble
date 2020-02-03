@@ -15,7 +15,8 @@
     }
   ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "bundle": "rm -r dist && mkdir dist && rollup -c"
   },
   "dependencies": {
     "timm": "^1.6.2"
@@ -23,7 +24,13 @@
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.0",
     "babel-jest": "^25.1.0",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "rollup": "^1.31.0",
+    "rollup-cli": "^1.0.9",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-terser": "^5.2.0"
   }
 }
