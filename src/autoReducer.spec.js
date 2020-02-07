@@ -63,6 +63,17 @@ describe('autoReducer', () => {
       expect(result.attributes[0]).toEqual({ type: 'level', data: 5, freq: 0.25 });
     });
 
+    it('should be able to add an attribute to an object at a key', () => {
+      const result = autoReducer(testStateObject, {
+        type: 'set',
+        path: ['attributes', 0],
+        key: 'freq',
+        value: 0.25,
+      });
+
+      expect(result.attributes[0]).toEqual({ type: 'level', data: 5, freq: 0.25 });
+    });
+
     it('should be able to set a single value in an array', () => {
       const result = autoReducer(testStateObject, { type: 'set', path: ['tags', 1], value: 'altered' });
 

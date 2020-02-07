@@ -2,7 +2,7 @@ import timm from 'timm';
 
 const actionTypes = {
   merge: (target, action) => timm.merge(target, action.value),
-  set: (target, action) => action.value,
+  set: (target, action) => action.key ? timm.set(target, action.key, action.value) : action.value,
   omit: (target, action) => timm.omit(target, action.key),
   insertAt: (target, action) => timm.insert(target, action.index, action.value),
   removeAt: (target, action) => timm.removeAt(target, action.index),
