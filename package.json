@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A micro auto-reducer library for state management",
   "main": "./src/burble.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/njweb/bristle"
