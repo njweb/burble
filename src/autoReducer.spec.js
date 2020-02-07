@@ -42,7 +42,7 @@ describe('autoReducer', () => {
       expect(result).toEqual({ title: 'replacement' });
     });
   });
-  describe('set action type', () => {
+  describe('set action', () => {
     it('should be able to set a value in an object', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
@@ -90,7 +90,7 @@ describe('autoReducer', () => {
       expect(result.tags).toEqual(['duplicate', 'duplicate']);
     });
   });
-  describe('merge action type', () => {
+  describe('merge action', () => {
     it('should merge the target object with the provided value', () => {
       const result = autoReducer(testStateObject, {
         type: 'merge',
@@ -101,7 +101,7 @@ describe('autoReducer', () => {
       expect(result.attributes[0]).toEqual({ type: 'powerLevel', data: 5, freq: 0.25 });
     });
   });
-  describe('omit action type', () => {
+  describe('omit action', () => {
     it('should remvove the key from the target object', () => {
       const result = autoReducer(testStateObject, {
         type: 'omit',
@@ -122,7 +122,7 @@ describe('autoReducer', () => {
       expect(result.attributes[0]).toEqual({ });
     });
   });
-  describe('insertAt action type', () => {
+  describe('insertAt action', () => {
     it('should insert a value into an array at an index', () => {
       const result = autoReducer(testStateObject, {
         type: 'insertAt',
@@ -135,7 +135,7 @@ describe('autoReducer', () => {
       expect(result.attributes[1]).toEqual({ name: 'new item' });
     });
   });
-  describe('removeAt action type', () => {
+  describe('removeAt action', () => {
     it('should remove a value from an array at an index', () => {
       const result = autoReducer(testStateObject, {
         type: 'removeAt',
@@ -153,7 +153,7 @@ describe('autoReducer', () => {
       });
     });
   });
-  describe('insertFirst action type', () => {
+  describe('insertFirst action', () => {
     it('should add an item to the start of an array', () => {
       const result = autoReducer(testStateObject, {
         type: 'insertFirst',
@@ -165,7 +165,7 @@ describe('autoReducer', () => {
       expect(result.attributes[0]).toEqual({ name: 'new item' });
     });
   });
-  describe('removeFirst action type', () => {
+  describe('removeFirst action', () => {
     it('should remove an item to the start of an array', () => {
       const result = autoReducer(testStateObject, {
         type: 'removeFirst',
@@ -176,7 +176,7 @@ describe('autoReducer', () => {
       expect(result.attributes[0]).toEqual({ type: 'stacks', data: [32, 40, 101] });
     });
   });
-  describe('insertLast action type', () => {
+  describe('insertLast action', () => {
     it('should insert an item at the end of an array', () => {
       const result = autoReducer(testStateObject, {
         type: 'insertLast',
@@ -188,7 +188,7 @@ describe('autoReducer', () => {
       expect(result.attributes[3]).toEqual({ name: 'new item' });
     });
   });
-  describe('removeLast action type', () => {
+  describe('removeLast action', () => {
     it('should insert an item at the end of an array', () => {
       const result = autoReducer(testStateObject, {
         type: 'removeLast',
