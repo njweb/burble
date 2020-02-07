@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "bundle": "rm -r dist && mkdir dist && rollup -c"
+    "build": "rm -r dist && mkdir dist && rollup -c"
   },
   "dependencies": {
     "timm": "^1.6.2"
