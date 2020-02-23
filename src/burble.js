@@ -1,2 +1,7 @@
-export { default as actionArrayMiddleware } from './actionArrayMiddleware.js';
-export { default as autoReducer } from './autoReducer.js';
+import actionArrayMiddleware from './actionArrayMiddleware';
+import autoReducer from './autoReducer';
+
+export { actionArrayMiddleware, autoReducer };
+const burble = { actionArrayMiddleware, autoReducer };
+export default burble;
+

@@ -2,7 +2,8 @@
   "name": "burble",
   "version": "0.1.0",
   "description": "A micro auto-reducer library for state management",
-  "main": "./src/burble.js",
+  "main": "./dist/burble.js",
+  "module": "./dist/burble.esm.js",
   "type": "module",
   "repository": {
     "type": "git",
@@ -17,10 +18,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "rm -r dist && mkdir dist && rollup -c"
-  },
-  "dependencies": {
-    "timm": "^1.6.2"
+    "build": "if [ -d dist ]; then rm -r dist; fi && mkdir dist && rollup -c"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

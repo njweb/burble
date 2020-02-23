@@ -11,8 +11,8 @@ const output = {
 };
 
 const plugins = [
-  commonjs({ include: 'node_modules/**' }),
   resolve(),
+  commonjs({ include: 'node_modules/**' }),
   babel({ exclude: 'node_modules/**' }),
 ];
 
@@ -21,6 +21,14 @@ export default [{
   output: {
     file: 'dist/burble.esm.js',
     format: 'esm'
+  },
+  plugins,
+}, {
+  input: 'src/burble.js',
+  output: {
+    file: 'dist/burble.js',
+    format: 'cjs',
+    exports: 'named',
   },
   plugins,
 }, {

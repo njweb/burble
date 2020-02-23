@@ -18,17 +18,11 @@ const testStateObject = {
 
 describe('autoReducer', () => {
   describe('object transformation', () => {
-    it('should return the input object if the transform does not change it', () => {
-      const result = autoReducer(testStateObject, { type: 'set', path: ['tags', 1], value: 'happy' });
-
-      expect(result === testStateObject).toBe(true);
-    });
-
     it('should replace the root with an empty path array', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
         path: [],
-        value: { title: 'replacement' },
+        payload: { title: 'replacement' },
       });
 
       expect(result).toEqual({ title: 'replacement' });
@@ -36,7 +30,7 @@ describe('autoReducer', () => {
     it('should replace the root with an missing path array', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
-        value: { title: 'replacement' },
+        payload: { title: 'replacement' },
       });
 
       expect(result).toEqual({ title: 'replacement' });
@@ -47,7 +41,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
         path: ['attributes', 2, 'data', 0, 'name'],
-        value: 'madeline',
+        payload: 'madeline',
       });
 
       expect(result.attributes[2].data[0].name).toEqual('madeline');
@@ -57,7 +51,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
         path: ['attributes', 0, 'freq'],
-        value: 0.25,
+        payload: 0.25,
       });
 
       expect(result.attributes[0]).toEqual({ type: 'level', data: 5, freq: 0.25 });
@@ -68,14 +62,14 @@ describe('autoReducer', () => {
         type: 'set',
         path: ['attributes', 0],
         key: 'freq',
-        value: 0.25,
+        payload: 0.25,
       });
 
       expect(result.attributes[0]).toEqual({ type: 'level', data: 5, freq: 0.25 });
     });
 
     it('should be able to set a single value in an array', () => {
-      const result = autoReducer(testStateObject, { type: 'set', path: ['tags', 1], value: 'altered' });
+      const result = autoReducer(testStateObject, { type: 'set', path: ['tags', 1], payload: 'altered' });
 
       expect(result.tags).toEqual(['green', 'altered']);
     });
@@ -84,10 +78,16 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'set',
         path: ['tags', [0, 1]],
-        value: 'duplicate',
+        payload: 'duplicate',
       });
 
       expect(result.tags).toEqual(['duplicate', 'duplicate']);
+    });
+
+    it('should return the input object if the transform does not change it', () => {;
+      const result = autoReducer(testStateObject, { type: 'set', path: ['tags', 1], payload: 'happy' });
+
+      expect(result === testStateObject).toBe(true);
     });
   });
   describe('merge action', () => {
@@ -95,7 +95,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'merge',
         path: ['attributes', 0],
-        value: { type: 'powerLevel', freq: 0.25 },
+        payload: { type: 'powerLevel', freq: 0.25 },
       });
 
       expect(result.attributes[0]).toEqual({ type: 'powerLevel', data: 5, freq: 0.25 });
@@ -106,7 +106,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'omit',
         path: ['attributes', 0],
-        key: 'data',
+        payload: 'data',
       });
 
       expect(result.attributes[0]).toEqual({ type: 'level' });
@@ -116,7 +116,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'omit',
         path: ['attributes', 0],
-        key: ['type', 'data'],
+        payload: ['type', 'data'],
       });
 
       expect(result.attributes[0]).toEqual({ });
@@ -128,7 +128,7 @@ describe('autoReducer', () => {
         type: 'insertAt',
         path: ['attributes'],
         index: 1,
-        value: { name: 'new item' },
+        payload: { name: 'new item' },
       });
 
       expect(result.attributes).toHaveLength(4);
@@ -158,7 +158,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'insertFirst',
         path: ['attributes'],
-        value: { name: 'new item' },
+        payload: { name: 'new item' },
       });
 
       expect(result.attributes).toHaveLength(4);
@@ -181,7 +181,7 @@ describe('autoReducer', () => {
       const result = autoReducer(testStateObject, {
         type: 'insertLast',
         path: ['attributes'],
-        value: { name: 'new item' },
+        payload: { name: 'new item' },
       });
 
       expect(result.attributes).toHaveLength(4);
