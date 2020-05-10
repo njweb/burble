@@ -19,7 +19,7 @@
     "test": "jest",
     "build": "rm -r dist && mkdir dist && rollup -c"
   },
-  "dependencies": {
+  "peerDependencies": {
     "timm": "^1.6.2"
   },
   "devDependencies": {
